@@ -79,8 +79,7 @@ def read_image(image_path, is_mask=False, gray=False, verbose=True, resize_shape
         height = int(np.round((image.shape[0] * resize_width / image.shape[1])))
         image = cv2.resize(image, (resize_width, height), interpolation=cv2.INTER_AREA)
 
-    # 성인 남자 신발(270) 기준 가로 세로 비율 1:2.5 (데이터셋 평균 비율 1:2.51)
-    # -> 288 x 720으로 임의 선정 
+    # -> 288 x 720으로 임의 선정 (1:2.5)
     # 오류 X But 실제 이미지 비율과 다르기 때문에 후에 예측 과정에서 문제 발생 가능성 있음 
     # -> resize_shape = False 
     if resize_shape:
