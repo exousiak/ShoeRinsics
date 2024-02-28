@@ -10,7 +10,7 @@ class Options():
 
     def initialize(self):
 
-        self.parser.add_argument("--output", default="../results", help="Folder to save results and models.")
+        self.parser.add_argument("--output", default="./results", help="Folder to save results and models.")
         self.parser.add_argument("--exp_name", default="shoerinsics", help="Name of experiment.")
         self.parser.add_argument("--weights_decomposer", required=self.train, default=None, help="Path to pretrained decomposer.")
 
@@ -61,8 +61,7 @@ class Options():
 
         # assert (opt.model in ['multimodal_single_model_supcon', 'multimodal_single_model', 'multimodal_single_model_supcon_normal',
         #                       'multimodal_single_model_normal', 'multimodal_two_models', 'supcon', 'multimodal_single_model_supcon_low_dim_normal'])
-        #
-        #
+        
         # assert (opt.val in ['retrieval', 'triplets'])
         # assert (opt.test_ref in ['real_test_shoes', 'FID300', 'FID_matches', 'crimescene_data'])
         # assert (opt.test_crime in ['FID300_tracks'])
@@ -76,10 +75,10 @@ class Options():
         # opt.input = opt.input.split(',')
         # for i in opt.input:
         #     assert (i in ['rgb','print','depth'])
-        #
+        
         # if opt.model in ['multimodal_single_model', 'multimodal_single_model_normal']:
         #     assert('print' not in opt.input[1:])
-        #
+        
         # opt.occlusion_percents = sorted(list(map(int, opt.occlusion_percents.split(','))))
         # # opt.mask_percent = int(opt.mask_percent)
         # opt.occlusion_types = opt.occlusion_types.split(',')
@@ -88,13 +87,13 @@ class Options():
         # # assert (opt.mask_occlusion_type in ['right-left', 'left-right', 'top-bottom', 'bottom-top'])
         # opt.occlusion_percent = 0
         # opt.occlusion_type = 'right-left'
-        #
+        
         # # opt.exp_types = opt.exp_types.split(',')
         # # for i in opt.exp_types:
         # #     assert (i in ['default','mask_database_image','mask_database_feature'])
         # assert (opt.exp_type in ['default', 'mask_database_image', 'mask_database_feature', 'mask_database_feature_not_query_feature'])
         # opt.mask_features = False
-        #
+        
         # if opt.warm:
         #     opt.warmup_from = 0.01
         #     opt.warmup_to = opt.lr

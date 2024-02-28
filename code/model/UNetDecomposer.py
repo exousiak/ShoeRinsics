@@ -1,7 +1,7 @@
 import numpy as np
-from code.model.util import Stich, join, normalize
-from code.model.unet_parts import *
-from code.model.base_model import BaseModel
+from model.util import Stich, join, normalize
+from model.unet_parts import *
+from model.base_model import BaseModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -95,9 +95,9 @@ class UNetDecomposer(BaseModel):
         sys.stdout.write('<Decomposer> Building encoder:\t\t')
         self.encoder = build_encoder(channels, kernel_size, padding, stride_fn).to(device)
 
-        #######################
-        #### decoders ####
-        #######################
+        ########################################
+        ####            decoders            ####
+        ########################################
 
         sys.stdout.write('<Decomposer> Building normal decoder:\t')
         stride_fn = lambda ind: 1
@@ -220,9 +220,7 @@ class UNetDecomposer(BaseModel):
 
         return albedo, depth, normals, light, light_type
 
-    def get_patch(self, tensor, i, j):
-        return tensor[:, :, j:j + self.h, i:i + self.w]
-
+    def get_patch(self, tensor, i, j):        return tensor[:, :, j:j + self.h, i:i + self.w]
     def forward(self, x, mask=None, mean_shift=True):
         if x.shape[2] == self.w and x.shape[3] == self.h:
             return self.forward_patch(x)
@@ -282,11 +280,11 @@ class UNetDecomposer(BaseModel):
 #     model.encoder[i][1].conv.load_state_dict(model2.encoder[i][1].state_dict())
 # model.encoder[4].conv.load_state_dict(model2.encoder[4].state_dict())
 # model.encoder[5].load_state_dict(model2.encoder[5].state_dict())
-#
+
 # for i in range(7):
 #     model.decoder_albedo[i].conv.load_state_dict(model2.decoder_albedo[i].state_dict())
 # model.decoder_albedo[7].load_state_dict(model2.decoder_albedo[7].state_dict())
-#
+
 # for i in range(3):
 #     model.decoder_normals[i].conv.load_state_dict(model2.decoder_normals[i].state_dict())
 #     model.decoder_depth[i].conv.load_state_dict(model2.decoder_depth[i].state_dict())
@@ -299,6 +297,6 @@ class UNetDecomposer(BaseModel):
 # model.decoder_depth[6][0].load_state_dict(model2.decoder_depth[6][0].state_dict())
 # model.decoder_depth[6][1].conv.load_state_dict(model2.decoder_depth[6][1].state_dict())
 # model.decoder_depth[7].load_state_dict(model2.decoder_depth[7].state_dict())
-#
+
 # model.decoder_light.load_state_dict(model2.decoder_light.state_dict())
-# model.save_checkpoint('../models/', None, 0, 0, 0, is_best=True)
+# model.save_checkpoint('../models/', None, 0, 0, 0, is_best=True) 

@@ -42,9 +42,9 @@ def get_image_modifications(image):
     transforms.extend(rotate_transforms)
     images.extend(rotate_images)
 
-    scale_images, scale_transforms = get_image_scale_modifications(image)
-    transforms.extend(scale_transforms)
-    images.extend(scale_images)
+    # scale_images, scale_transforms = get_image_scale_modifications(image)
+    # transforms.extend(scale_transforms)
+    # images.extend(scale_images)
 
     for rotate_image, rotate_transform in zip(rotate_images, rotate_transforms):
         rotate_flip_images, rotate_flip_transforms = get_image_flip_modifications(rotate_image)

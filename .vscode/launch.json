@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./code/test.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--weights_decomposer", "./code/model/decomposer_best_state.t7",    
+                "--dataroot", "./code/dataset",
+                "--val_dataset_dir", "test",
+                "--test_time_aug"
+            ]
+        }
+    ]
+}

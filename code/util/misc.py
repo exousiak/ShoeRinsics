@@ -117,7 +117,12 @@ def save_individual_images(data, folder, name, pad_h_before=None, pad_h_after=No
             os.makedirs(os.path.join(folder, title), exist_ok=True)
 
             n = name[i] + ".png" if len(name[i]) < 5 or name[i][-4:] not in [".png", ".jpg"] else name[i]
-            save_image(sub_image.float(), os.path.join(folder, title, n))
+            try:
+                save_image(sub_image.float(), os.path.join(folder, title, n))
+            except ValueError as e:
+                print(f"Error saving image {n}: {e}")
+                break
+
 
 
 

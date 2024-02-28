@@ -57,5 +57,3 @@ class Discriminator(nn.Module):
         data = torch.load(weights, map_location=device)
         self.load_state_dict(data['model_state_dict'])
         return data['iteration'], data['optimizer_state_dict'], data['loss']
-
-

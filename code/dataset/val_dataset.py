@@ -1,7 +1,8 @@
 import numpy as np
 import os
-from code.dataset.util import read_image, image_to_channels
-from code.util.misc import get_invalid_tensor
+from dataset.util import read_image, image_to_channels
+from util.misc import get_invalid_tensor
+import cv2
 
 class ValDataset(object):
 
@@ -57,11 +58,20 @@ class ValDataset(object):
         index = index % len(self.image_files)
 
         image = read_image(self.image_files[index])
-        mask = read_image(self.mask_files[index], is_mask=True).astype(np.float)
-        image = np.pad(image, ((self.pad_h_before, self.pad_h_after), (self.pad_w_before, self.pad_w_after), (0,0)), mode='edge')
-        mask = np.pad(mask, ((self.pad_h_before, self.pad_h_after), (self.pad_w_before, self.pad_w_after), (0, 0)), mode='edge')
+        mask = read_image(self.mask_files[index], is_mask=False).astype(float)
 
+        # 마스크 해상도 조정
+        target_height, target_width = image.shape[:2]
+        mask = cv2.resize(mask, (target_width, target_height), interpolation=cv2.INTER_NEAREST)
+        
+        # 마스크 전처리
+        mask = mask[..., 0:1]
+        mask = mask > np.max(mask) / 2
+
+        image = np.pad(image, ((self.pad_h_before, self.pad_h_after), (self.pad_w_before, self.pad_w_after), (0,0)), mode='constant' , constant_values=1)
+        mask = np.pad(mask, ((self.pad_h_before, self.pad_h_after), (self.pad_w_before, self.pad_w_after), (0, 0)), mode='constant' , constant_values=0)
         # move the channel to the first dimension for training
+        
         mask = np.round(mask).astype(bool)
         mask3d_inverted = ~mask.repeat(3, axis=2)
         image[mask3d_inverted] = 1
@@ -72,7 +82,7 @@ class ValDataset(object):
             print_ = read_image(self.print_files[index])
             print_ = np.pad(print_, ((self.pad_h_before, self.pad_h_after), (self.pad_w_before, self.pad_w_after), (0,0)), mode='edge')#, constant_values=1)
             print_ = image_to_channels(print_)
-            print_ = print_[0:1, ...].astype(np.bool)
+            print_ = print_[0:1, ...].astype(bool)
         else:
             print_ = get_invalid_tensor(tensor=False)
 
@@ -84,7 +94,7 @@ class ValDataset(object):
         else:
             albedo = get_invalid_tensor(tensor=False)
 
-        return image, mask[0:1, ...].astype(np.bool), print_, albedo, self.image_file_names[index], \
+        return image, mask[0:1, ...].astype(bool), print_, albedo, self.image_file_names[index], \
                self.pad_h_before, self.pad_h_after, self.pad_w_before, self.pad_w_after
 
     def __len__(self):

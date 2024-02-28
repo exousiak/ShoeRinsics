@@ -1,6 +1,6 @@
 import torch as th
-from code.model.UNetDecomposer import *
-from code.model.base_model import BaseModel
+from model.UNetDecomposer import *
+from model.base_model import BaseModel
 # from code.utils.utils import make_one_hot
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

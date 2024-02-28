@@ -1,7 +1,11 @@
 import torch, torch.nn as nn
 import numpy as np
-from code.util.misc import valid_tensor
-
+from util.misc import valid_tensor
+from scipy import ndimage
+import os
+import matplotlib.pyplot as plt
+from datetime import datetime
+import torch.nn.functional as F
 
 '''Calculate Intersection over Union (IoU) between print_pred and print_GT. IoU is only calculated in area specified by mask.'''
 def iou(print_pred, print_GT, mask):
@@ -11,6 +15,30 @@ def iou(print_pred, print_GT, mask):
     union_sum = torch.sum(union[mask])
     return 100.0 * intersection_sum / union_sum
 
+import torch
+import torch.nn.functional as F
+
+def find_edges(mask, dilation_iterations):
+    # 초기 경계선 검출
+    edge_mask = torch.zeros_like(mask).bool()
+    for y_shift in [-1, 0, 1]:
+        for x_shift in [-1, 0, 1]:
+            if y_shift == 0 and x_shift == 0:
+                continue
+            shifted_mask = torch.roll(mask, shifts=(y_shift, x_shift), dims=(-2, -1))
+            edge_mask |= (mask & ~shifted_mask)
+
+    # 경계선을 더 두껍게 만들기 위해 추가적인 팽창 과정 적용
+    for i in range(dilation_iterations):
+        dilated_edge_mask = edge_mask.clone()
+        # 팽창을 균일하게 적용하기 위해, 각 방향으로 동일한 횟수만큼 팽창을 시도합니다.
+        for y_shift in [-1, 0, 1]:
+            for x_shift in [-1, 0, 1]:
+                if y_shift == 0 and x_shift == 0:
+                    continue
+                shifted_edge_mask = torch.roll(dilated_edge_mask, shifts=(y_shift, x_shift), dims=(1, 2))
+                edge_mask |= shifted_edge_mask
+    return edge_mask
 
 """Given a depth map or an RGB image of a shoe, get an estimate for the print left on the ground"""
 def get_print(t, mask, print_GT):
@@ -92,5 +120,21 @@ def get_print(t, mask, print_GT):
                 best_iou = new_iou
         if best_lower_depth_thresh:
             print_[tensor < low_depth_val * best_lower_depth_thresh] = False
+    
+    # 경계선 검출 
+    edges = find_edges(mask, dilation_iterations=3) # 팽창 파라미터 선정 -> 3
+    print_ = print_.clone()
+    print_[edges] = True
+            
+    # 족적 이미지 흑백 전환
+    return ~print_ 
 
+'''
+    # 족적 이미지 흑백 전환 
+    print_ = ~print_
+
+    # edges = detect_edges(mask)
+    # print_[edges] = False
+    
     return print_
+'''
